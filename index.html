@@ -63,7 +63,7 @@
 
     function pay(amount, plan) {
         let userId = Telegram.WebApp.initDataUnsafe.user?.id || 0;
-        let paymentUrl = `https://t.me/Cny_asu_VIP_Bot?start=pay_${userId}_${amount}`;
+        let paymentUrl = `https://t.me/Cny_asu_VIP_Bot?start=subscribe_${userId}_${amount}`;
 
         Telegram.WebApp.openLink(paymentUrl);
     }
