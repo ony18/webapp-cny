@@ -1,0 +1,73 @@
+<!DOCTYPE html><html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Plans</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .plan {
+            background: white;
+            padding: 20px;
+            margin: 10px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        button {
+            padding: 10px 20px;
+            background: #0088cc;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Choose Your Subscription</h2><div class="plan">
+    <h3>Basic Membership</h3>
+    <p>Access for 1 month</p>
+    <p>Price: $5</p>
+    <button onclick="pay(5, 'Basic Membership')">Pay $5</button>
+</div>
+
+<div class="plan">
+    <h3>VIP Membership</h3>
+    <p>Access for 3 months</p>
+    <p>Price: $12</p>
+    <button onclick="pay(12, 'VIP Membership')">Pay $12</button>
+</div>
+
+<div class="plan">
+    <h3>Premium Membership</h3>
+    <p>Access for 6 months</p>
+    <p>Price: $20</p>
+    <button onclick="pay(20, 'Premium Membership')">Pay $20</button>
+</div>
+
+<div class="plan">
+    <h3>Exclusive Membership</h3>
+    <p>Access for 12 months</p>
+    <p>Price: $35</p>
+    <button onclick="pay(35, 'Exclusive Membership')">Pay $35</button>
+</div>
+
+<script>
+    Telegram.WebApp.expand(); // Expand the Web App to full screen
+
+    function pay(amount, plan) {
+        let userId = Telegram.WebApp.initDataUnsafe.user?.id || 0;
+        let paymentUrl = `https://t.me/Cny_asu_VIP_Bot?start=pay_${userId}_${amount}`;
+
+        Telegram.WebApp.openLink(paymentUrl);
+    }
+</script>
+
+</body>
+</html>
