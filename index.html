@@ -2,7 +2,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payment Plans</title>
+    <title>Subscription Plans</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body {
@@ -11,12 +11,15 @@
             padding: 20px;
             background-color: #f4f4f4;
         }
-        .plan, .payment-method {
+        .plan {
             background: white;
             padding: 20px;
             margin: 10px;
             border-radius: 10px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         button {
             padding: 10px 20px;
@@ -25,71 +28,68 @@
             border: none;
             cursor: pointer;
             border-radius: 5px;
-            margin-top: 10px;
+        }
+        .cart {
+            margin-top: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
     </style>
 </head>
 <body>
-    <h2>Choose Your Subscription</h2><div class="plan">
+    <h2>Select Your Subscription</h2><div class="plan">
     <h3>Muscle Month 💪</h3>
-    <p>1 Month Access</p>
-    <p>Price: $5</p>
-    <button onclick="chooseSubscription(5, 'Muscle Month')">Select</button>
+    <p>$5</p>
+    <button onclick="addToCart('Muscle Month', 5)">Add</button>
 </div>
 
 <div class="plan">
     <h3>Bitcoin Strong 💰</h3>
-    <p>2 Months Access</p>
-    <p>Price: $10</p>
-    <button onclick="chooseSubscription(10, 'Bitcoin Strong')">Select</button>
+    <p>$10</p>
+    <button onclick="addToCart('Bitcoin Strong', 10)">Add</button>
 </div>
 
 <div class="plan">
     <h3>Training Camp 🏕</h3>
-    <p>3 Months Access</p>
-    <p>Price: $15</p>
-    <button onclick="chooseSubscription(15, 'Training Camp')">Select</button>
+    <p>$15</p>
+    <button onclick="addToCart('Training Camp', 15)">Add</button>
 </div>
 
-<div id="auto-renew" style="display:none;">
-    <h3>Enable Auto-Renew?</h3>
-    <button onclick="selectAutoRenew(true)">Yes</button>
-    <button onclick="selectAutoRenew(false)">No</button>
-</div>
-
-<div id="payment-method" style="display:none;">
-    <h3>Choose Payment Method</h3>
-    <button onclick="pay('crypto')">Crypto (No KYC)</button>
-    <button onclick="pay('paypal')">PayPal</button>
+<div class="cart" id="cart" style="display:none;">
+    <h3>Shopping Cart</h3>
+    <ul id="cart-items"></ul>
+    <button onclick="checkout()">Confirm & Pay</button>
 </div>
 
 <script>
-    let selectedAmount = 0;
-    let selectedPlan = "";
-    let autoRenew = false;
+    let cart = [];
 
-    function chooseSubscription(amount, plan) {
-        selectedAmount = amount;
-        selectedPlan = plan;
-        document.getElementById("auto-renew").style.display = "block";
+    function addToCart(plan, price) {
+        cart.push({ plan, price });
+        updateCart();
     }
 
-    function selectAutoRenew(choice) {
-        autoRenew = choice;
-        document.getElementById("auto-renew").style.display = "none";
-        document.getElementById("payment-method").style.display = "block";
+    function updateCart() {
+        let cartContainer = document.getElementById("cart");
+        let cartItems = document.getElementById("cart-items");
+        cartItems.innerHTML = "";
+        
+        cart.forEach(item => {
+            let li = document.createElement("li");
+            li.textContent = `${item.plan} - $${item.price}`;
+            cartItems.appendChild(li);
+        });
+        
+        cartContainer.style.display = "block";
     }
 
-    function pay(method) {
+    function checkout() {
         let userId = Telegram.WebApp.initDataUnsafe.user?.id || 0;
-        let paymentUrl = "";
-
-        if (method === 'crypto') {
-            paymentUrl = `https://t.me/Cny_asu_VIP_Bot?start=crypto_${userId}_${selectedAmount}`;
-        } else if (method === 'paypal') {
-            paymentUrl = `https://t.me/Cny_asu_VIP_Bot?start=paypal_${userId}_${selectedAmount}`;
-        }
-
+        let totalAmount = cart.reduce((sum, item) => sum + item.price, 0);
+        
+        let paymentUrl = `https://t.me/Cny_asu_VIP_Bot?start=checkout_${userId}_${totalAmount}`;
         Telegram.WebApp.openLink(paymentUrl);
     }
 </script>
