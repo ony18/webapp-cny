@@ -11,7 +11,7 @@
             padding: 20px;
             background-color: #f4f4f4;
         }
-        .plan {
+        .plan, .payment-method {
             background: white;
             padding: 20px;
             margin: 10px;
@@ -31,39 +31,64 @@
 </head>
 <body>
     <h2>Choose Your Subscription</h2><div class="plan">
-    <h3>Basic Membership</h3>
-    <p>Access for 1 month</p>
+    <h3>Muscle Month 💪</h3>
+    <p>1 Month Access</p>
     <p>Price: $5</p>
-    <button onclick="pay(5, 'Basic Membership')">Pay $5</button>
+    <button onclick="chooseSubscription(5, 'Muscle Month')">Select</button>
 </div>
 
 <div class="plan">
-    <h3>VIP Membership</h3>
-    <p>Access for 3 months</p>
-    <p>Price: $12</p>
-    <button onclick="pay(12, 'VIP Membership')">Pay $12</button>
+    <h3>Bitcoin Strong 💰</h3>
+    <p>2 Months Access</p>
+    <p>Price: $10</p>
+    <button onclick="chooseSubscription(10, 'Bitcoin Strong')">Select</button>
 </div>
 
 <div class="plan">
-    <h3>Premium Membership</h3>
-    <p>Access for 6 months</p>
-    <p>Price: $20</p>
-    <button onclick="pay(20, 'Premium Membership')">Pay $20</button>
+    <h3>Training Camp 🏕</h3>
+    <p>3 Months Access</p>
+    <p>Price: $15</p>
+    <button onclick="chooseSubscription(15, 'Training Camp')">Select</button>
 </div>
 
-<div class="plan">
-    <h3>Exclusive Membership</h3>
-    <p>Access for 12 months</p>
-    <p>Price: $35</p>
-    <button onclick="pay(35, 'Exclusive Membership')">Pay $35</button>
+<div id="auto-renew" style="display:none;">
+    <h3>Enable Auto-Renew?</h3>
+    <button onclick="selectAutoRenew(true)">Yes</button>
+    <button onclick="selectAutoRenew(false)">No</button>
+</div>
+
+<div id="payment-method" style="display:none;">
+    <h3>Choose Payment Method</h3>
+    <button onclick="pay('crypto')">Crypto (No KYC)</button>
+    <button onclick="pay('paypal')">PayPal</button>
 </div>
 
 <script>
-    Telegram.WebApp.expand(); // Expand the Web App to full screen
+    let selectedAmount = 0;
+    let selectedPlan = "";
+    let autoRenew = false;
 
-    function pay(amount, plan) {
+    function chooseSubscription(amount, plan) {
+        selectedAmount = amount;
+        selectedPlan = plan;
+        document.getElementById("auto-renew").style.display = "block";
+    }
+
+    function selectAutoRenew(choice) {
+        autoRenew = choice;
+        document.getElementById("auto-renew").style.display = "none";
+        document.getElementById("payment-method").style.display = "block";
+    }
+
+    function pay(method) {
         let userId = Telegram.WebApp.initDataUnsafe.user?.id || 0;
-        let paymentUrl = `https://t.me/Cny_asu_VIP_Bot?start=subscribe_${userId}_${amount}`;
+        let paymentUrl = "";
+
+        if (method === 'crypto') {
+            paymentUrl = `https://t.me/Cny_asu_VIP_Bot?start=crypto_${userId}_${selectedAmount}`;
+        } else if (method === 'paypal') {
+            paymentUrl = `https://t.me/Cny_asu_VIP_Bot?start=paypal_${userId}_${selectedAmount}`;
+        }
 
         Telegram.WebApp.openLink(paymentUrl);
     }
